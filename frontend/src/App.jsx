@@ -1,8 +1,12 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import FeatureCard from "./components/FeatureCard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
-function App() {
+function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
 
@@ -34,6 +38,27 @@ function App() {
       </main>
 
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+
+      <Routes>
+
+        {/* Landing Page */}
+        <Route path="/" element={<Home />} />
+
+        {/* Login Page */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Register Page */}
+        <Route path="/register" element={<Register />} />
+
+      </Routes>
+
+    </BrowserRouter>
   );
 }
 
