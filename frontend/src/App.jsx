@@ -3,10 +3,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import FeatureCard from "./components/FeatureCard";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+
 
 function Home() {
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
 
@@ -41,25 +45,43 @@ function Home() {
   );
 }
 
+
 function App() {
+
   return (
     <BrowserRouter>
 
       <Routes>
 
         {/* Landing Page */}
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-        {/* Login Page */}
-        <Route path="/login" element={<Login />} />
+        {/* Login */}
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-        {/* Register Page */}
-        <Route path="/register" element={<Register />} />
+        {/* Register */}
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        {/* Dashboard */}
+        <Route
+          path="/dashboard"
+          element={<Dashboard />}
+        />
 
       </Routes>
 
     </BrowserRouter>
   );
 }
+
 
 export default App;
