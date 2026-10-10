@@ -27,7 +27,7 @@ app.use(express.json());
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024,
+    fileSize: 50 * 1024 * 1024,
     files: 1,
   },
   fileFilter: (req, file, callback) => {
@@ -336,7 +336,7 @@ app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     const message =
       error.code === "LIMIT_FILE_SIZE"
-        ? "The resume must be 5 MB or smaller."
+        ? "The resume must be 50 MB or smaller."
         : "The upload was rejected. Please upload one PDF at a time.";
 
     return res.status(400).json({ message });
