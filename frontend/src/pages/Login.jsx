@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
+import { Link, useNavigate, useLocation } from "react-router-dom";
 function Login() {
 
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const registrationMessage = location.state?.message || "";
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -207,13 +207,19 @@ function Login() {
 
           {/* Error / Message */}
 
-          {message && (
+          {registrationMessage && (
+  <p className="text-center text-green-400 mt-5">
+    {registrationMessage}
+  </p>
+)}
 
-            <p className="text-center text-red-400 mt-5">
-              {message}
-            </p>
+{message && (
+  <p className="text-center text-red-400 mt-5">
+    {message}
+  </p>
+)}
 
-          )}
+          
 
 
           {/* Register */}

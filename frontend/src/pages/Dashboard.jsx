@@ -1,33 +1,28 @@
-import { Link } from "react-router-dom";
+
+
+import { Link, useNavigate } from "react-router-dom";
 
 function Dashboard() {
+  const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-
-      {/* Navbar */}
+      {/* Navigation */}
       <nav className="flex items-center justify-between px-8 py-5 border-b border-slate-800">
-
-        <Link
-          to="/"
-          className="text-2xl font-bold"
-        >
+        <Link to="/" className="text-2xl font-bold">
           Talent<span className="text-blue-500">IQ</span>
         </Link>
 
         <div className="flex items-center gap-5">
-
           <span className="text-slate-300">
             {user?.name || "User"}
           </span>
@@ -38,18 +33,12 @@ function Dashboard() {
           >
             Logout
           </button>
-
         </div>
-
       </nav>
 
-
-      {/* Main Dashboard */}
+      {/* Dashboard content */}
       <main className="max-w-7xl mx-auto px-8 py-12">
-
-        {/* Welcome */}
         <section className="mb-10">
-
           <p className="text-blue-400 mb-2">
             Welcome back 👋
           </p>
@@ -61,182 +50,111 @@ function Dashboard() {
           <p className="text-slate-400 mt-3">
             Your AI-powered career intelligence dashboard.
           </p>
-
         </section>
 
-
-        {/* Career Overview */}
-        <section className="grid md:grid-cols-3 gap-6 mb-8">
-
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-
-            <p className="text-slate-400">
+        {/* Overview cards */}
+        <section className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <p className="text-slate-400 text-sm">
               Profile Completion
             </p>
-
-            <h2 className="text-3xl font-bold mt-3">
-              20%
-            </h2>
-
-            <div className="w-full bg-slate-800 rounded-full h-2 mt-5">
-
-              <div
-                className="bg-blue-600 h-2 rounded-full"
-                style={{ width: "20%" }}
-              />
-
-            </div>
-
-            <p className="text-sm text-slate-500 mt-3">
-              Complete your profile to improve recommendations.
+            <h2 className="text-3xl font-bold mt-3">20%</h2>
+            <p className="text-slate-500 text-sm mt-2">
+              Complete your career profile.
             </p>
-
           </div>
 
-
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-
-            <p className="text-slate-400">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <p className="text-slate-400 text-sm">
               Skills Added
             </p>
-
-            <h2 className="text-3xl font-bold mt-3">
-              0
-            </h2>
-
-            <p className="text-sm text-slate-500 mt-5">
-              Add your technical and professional skills.
+            <h2 className="text-3xl font-bold mt-3">0</h2>
+            <p className="text-slate-500 text-sm mt-2">
+              Your skills will appear here.
             </p>
-
           </div>
 
-
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-
-            <p className="text-slate-400">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <p className="text-slate-400 text-sm">
               Career Matches
             </p>
-
-            <h2 className="text-3xl font-bold mt-3">
-              0
-            </h2>
-
-            <p className="text-sm text-slate-500 mt-5">
-              Complete your profile to discover opportunities.
+            <h2 className="text-3xl font-bold mt-3">0</h2>
+            <p className="text-slate-500 text-sm mt-2">
+              Matching opportunities will appear here.
             </p>
-
           </div>
-
         </section>
 
-
-        {/* AI Features */}
+        {/* Career intelligence features */}
         <section>
-
           <h2 className="text-2xl font-semibold mb-6">
             Career Intelligence
           </h2>
 
           <div className="grid md:grid-cols-2 gap-6">
-
-
-            {/* Resume */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
-
-              <div className="text-3xl mb-4">
-                📄
-              </div>
-
-              <h3 className="text-xl font-semibold">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+              <h3 className="text-xl font-semibold mb-3">
                 Resume Intelligence
               </h3>
-
-              <p className="text-slate-400 mt-3">
-                Upload your resume and let TalentIQ analyze your
-                skills, experience and career strengths.
+              <p className="text-slate-400 mb-5">
+                Analyze your resume and discover its strengths
+                and areas for improvement.
               </p>
-
-              <button className="mt-6 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg">
-                Upload Resume
+              <button
+                disabled
+                className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
+              >
+                Coming Soon
               </button>
-
             </div>
 
-
-            {/* Skills */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
-
-              <div className="text-3xl mb-4">
-                🧠
-              </div>
-
-              <h3 className="text-xl font-semibold">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+              <h3 className="text-xl font-semibold mb-3">
                 Skill Gap Analysis
               </h3>
-
-              <p className="text-slate-400 mt-3">
-                Discover which skills you need to develop
-                for your target career.
+              <p className="text-slate-400 mb-5">
+                Discover which skills you need for your target role.
               </p>
-
-              <button className="mt-6 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg">
-                Analyze Skills
+              <button
+                disabled
+                className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
+              >
+                Coming Soon
               </button>
-
             </div>
 
-
-            {/* Opportunities */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
-
-              <div className="text-3xl mb-4">
-                🎯
-              </div>
-
-              <h3 className="text-xl font-semibold">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+              <h3 className="text-xl font-semibold mb-3">
                 Opportunity Matching
               </h3>
-
-              <p className="text-slate-400 mt-3">
-                Find internships and jobs that match your
-                skills and career goals.
+              <p className="text-slate-400 mb-5">
+                Find jobs and internships that match your profile.
               </p>
-
-              <button className="mt-6 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg">
-                Find Opportunities
+              <button
+                disabled
+                className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
+              >
+                Coming Soon
               </button>
-
             </div>
 
-
-            {/* Roadmap */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
-
-              <div className="text-3xl mb-4">
-                🚀
-              </div>
-
-              <h3 className="text-xl font-semibold">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+              <h3 className="text-xl font-semibold mb-3">
                 Career Roadmap
               </h3>
-
-              <p className="text-slate-400 mt-3">
-                Build a personalized roadmap to reach your
-                target career.
+              <p className="text-slate-400 mb-5">
+                Plan your learning journey toward your target career.
               </p>
-
-              <button className="mt-6 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg">
-                Build Roadmap
+              <button
+                disabled
+                className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
+              >
+                Coming Soon
               </button>
-
             </div>
-
           </div>
-
         </section>
-
       </main>
-
     </div>
   );
 }
