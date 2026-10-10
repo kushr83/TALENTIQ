@@ -1,5 +1,4 @@
 
-
 import { Link, useNavigate } from "react-router-dom";
 
 function Dashboard() {
@@ -92,29 +91,35 @@ function Dashboard() {
           </h2>
 
           <div className="grid md:grid-cols-2 gap-6">
+            {/* Resume Intelligence */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
               <h3 className="text-xl font-semibold mb-3">
                 Resume Intelligence
               </h3>
+
               <p className="text-slate-400 mb-5">
-                Analyze your resume and discover its strengths
-                and areas for improvement.
+                Upload your resume, extract its text, and prepare
+                for skills analysis.
               </p>
-              <button
-                disabled
-                className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
+
+              <Link
+                to="/resume-analyzer"
+                className="inline-block px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-medium transition-colors"
               >
-                Coming Soon
-              </button>
+                Analyze Resume
+              </Link>
             </div>
 
+            {/* Skill Gap Analysis */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
               <h3 className="text-xl font-semibold mb-3">
                 Skill Gap Analysis
               </h3>
+
               <p className="text-slate-400 mb-5">
                 Discover which skills you need for your target role.
               </p>
+
               <button
                 disabled
                 className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
@@ -123,13 +128,16 @@ function Dashboard() {
               </button>
             </div>
 
+            {/* Opportunity Matching */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
               <h3 className="text-xl font-semibold mb-3">
                 Opportunity Matching
               </h3>
+
               <p className="text-slate-400 mb-5">
                 Find jobs and internships that match your profile.
               </p>
+
               <button
                 disabled
                 className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
@@ -138,13 +146,16 @@ function Dashboard() {
               </button>
             </div>
 
+            {/* Career Roadmap */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
               <h3 className="text-xl font-semibold mb-3">
                 Career Roadmap
               </h3>
+
               <p className="text-slate-400 mb-5">
                 Plan your learning journey toward your target career.
               </p>
+
               <button
                 disabled
                 className="px-4 py-2 rounded-lg bg-blue-600/50 text-slate-300 cursor-not-allowed"
