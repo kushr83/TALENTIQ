@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -9,20 +11,26 @@ function Login() {
   });
 
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
+
     const { name, value } = event.target;
 
     setFormData({
       ...formData,
       [name]: value,
     });
+
   };
 
+
   const handleSubmit = async (event) => {
+
     event.preventDefault();
 
     setMessage("");
+    setLoading(true);
 
     try {
 
@@ -30,55 +38,89 @@ function Login() {
         "http://localhost:5000/api/auth/login",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify(formData),
         }
       );
 
+
       const data = await response.json();
 
+
+      // Login failed
       if (!response.ok) {
+
         setMessage(data.message);
+        setLoading(false);
+
         return;
       }
 
-      // Store JWT token
-      localStorage.setItem("token", data.token);
 
-      // Store user information
+      // Save JWT token
+      localStorage.setItem(
+        "token",
+        data.token
+      );
+
+
+      // Save user information
       localStorage.setItem(
         "user",
         JSON.stringify(data.user)
       );
 
-      setMessage("Login successful!");
 
-      console.log("Login response:", data);
+      console.log(
+        "Login successful:",
+        data
+      );
+
+
+      // Go to dashboard
+      navigate("/dashboard");
 
     } catch (error) {
 
-      console.error("Login error:", error);
+      console.error(
+        "Login error:",
+        error
+      );
 
       setMessage(
         "Unable to connect to the TalentIQ server."
       );
 
+    } finally {
+
+      setLoading(false);
+
     }
+
   };
 
+
   return (
+
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
 
       <div className="w-full max-w-md">
 
+
         {/* Logo */}
+
         <div className="text-center mb-8">
 
-          <h1 className="text-3xl font-bold">
+          <Link
+            to="/"
+            className="text-3xl font-bold"
+          >
             Talent<span className="text-blue-500">IQ</span>
-          </h1>
+          </Link>
 
           <p className="text-slate-400 mt-2">
             Welcome back
@@ -88,6 +130,7 @@ function Login() {
 
 
         {/* Login Card */}
+
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
 
           <h2 className="text-2xl font-semibold mb-2">
@@ -101,7 +144,9 @@ function Login() {
 
           <form onSubmit={handleSubmit}>
 
+
             {/* Email */}
+
             <div className="mb-5">
 
               <label className="block text-sm text-slate-300 mb-2">
@@ -122,6 +167,7 @@ function Login() {
 
 
             {/* Password */}
+
             <div className="mb-6">
 
               <label className="block text-sm text-slate-300 mb-2">
@@ -142,25 +188,36 @@ function Login() {
 
 
             {/* Login Button */}
+
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium"
+              disabled={loading}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 rounded-lg font-medium"
             >
-              Sign In
+
+              {loading
+                ? "Signing in..."
+                : "Sign In"
+              }
+
             </button>
 
           </form>
 
 
-          {/* Backend Message */}
+          {/* Error / Message */}
+
           {message && (
-            <p className="text-center text-green-400 mt-5">
+
+            <p className="text-center text-red-400 mt-5">
               {message}
             </p>
+
           )}
 
 
-          {/* Register Link */}
+          {/* Register */}
+
           <p className="text-center text-slate-400 mt-6">
 
             Don't have an account?{" "}
@@ -179,7 +236,9 @@ function Login() {
       </div>
 
     </div>
+
   );
+
 }
 
 export default Login;
