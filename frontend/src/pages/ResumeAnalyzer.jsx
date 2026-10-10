@@ -135,6 +135,91 @@ const DEFAULT_RECOMMENDATION = {
   practice: "Read the official documentation and complete a beginner tutorial.",
   project: "Build a small project demonstrating the skill.",
 };
+
+const LEARNING_RESOURCES = {
+  Python: {
+    label: "Python Official Tutorial",
+    url: "https://docs.python.org/3/tutorial/",
+  },
+  SQL: {
+    label: "SQL Tutorial - W3Schools",
+    url: "https://www.w3schools.com/sql/",
+  },
+  "Machine Learning": {
+    label: "Google Machine Learning Crash Course",
+    url: "https://developers.google.com/machine-learning/crash-course",
+  },
+  "Artificial Intelligence": {
+    label: "CS50's Introduction to AI",
+    url: "https://cs50.harvard.edu/ai/",
+  },
+  "Data Analysis": {
+    label: "Kaggle Learn: Data Cleaning",
+    url: "https://www.kaggle.com/learn/data-cleaning",
+  },
+  NumPy: {
+    label: "NumPy Quickstart",
+    url: "https://numpy.org/doc/stable/user/quickstart.html",
+  },
+  Pandas: {
+    label: "Pandas Getting Started",
+    url: "https://pandas.pydata.org/docs/getting_started/",
+  },
+  "Scikit-learn": {
+    label: "Scikit-learn Tutorials",
+    url: "https://scikit-learn.org/stable/tutorial/",
+  },
+  "Data Structures": {
+    label: "GeeksforGeeks Data Structures",
+    url: "https://www.geeksforgeeks.org/data-structures/",
+  },
+  Algorithms: {
+    label: "VisuAlgo: Algorithms Visualized",
+    url: "https://visualgo.net/en",
+  },
+  OOP: {
+    label: "Microsoft: Object-Oriented Programming",
+    url: "https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/tutorials/oop",
+  },
+  "REST API": {
+    label: "MDN: HTTP Overview",
+    url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview",
+  },
+  Flask: {
+    label: "Flask Official Documentation",
+    url: "https://flask.palletsprojects.com/en/stable/tutorial/",
+  },
+  Git: {
+    label: "Pro Git Book",
+    url: "https://git-scm.com/book/en/v2",
+  },
+  GitHub: {
+    label: "GitHub Skills",
+    url: "https://skills.github.com/",
+  },
+  Docker: {
+    label: "Docker Get Started",
+    url: "https://docs.docker.com/get-started/",
+  },
+  AWS: {
+    label: "AWS Skill Builder",
+    url: "https://skillbuilder.aws/",
+  },
+  Communication: {
+    label: "Improve Communication Skills",
+    url: "https://www.coursera.org/courses?query=communication%20skills",
+  },
+  "Problem Solving": {
+    label: "HackerRank Problem Solving",
+    url: "https://www.hackerrank.com/domains/algorithms",
+  },
+};
+
+const DEFAULT_LEARNING_RESOURCE = {
+  label: "Find learning resources",
+  url: "https://www.freecodecamp.org/learn/",
+};
+
 function ResumeAnalyzer() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -555,6 +640,24 @@ function ResumeAnalyzer() {
                 <p className="text-blue-300 text-sm mt-2">
                   Learn: {recommendation.topic}
                 </p>
+
+{(() => {
+  const resource =
+    LEARNING_RESOURCES[skill] || DEFAULT_LEARNING_RESOURCE;
+
+  return (
+    <a
+      href={resource.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 mt-3 text-sm text-blue-400 hover:text-blue-300 underline underline-offset-4"
+    >
+      {resource.label}
+      <span aria-hidden="true">↗</span>
+    </a>
+  );
+})()}
+
 
                 <p className="text-slate-400 text-sm mt-2">
                   <span className="text-slate-300 font-medium">
