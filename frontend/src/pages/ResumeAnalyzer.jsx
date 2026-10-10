@@ -32,7 +32,109 @@ function findSkills(text) {
     return pattern.test(lowerText);
   });
 }
+const LEARNING_RECOMMENDATIONS = {
+  Python: {
+    topic: "Python fundamentals",
+    practice: "Practice functions, lists, dictionaries, and file handling.",
+    project: "Build a student marks analysis tool.",
+  },
+  SQL: {
+    topic: "SQL and database queries",
+    practice: "Practice JOINs, GROUP BY, subqueries, and aggregate functions.",
+    project: "Build a student database with searchable records.",
+  },
+  "Machine Learning": {
+    topic: "Machine Learning fundamentals",
+    practice: "Learn train-test splits, regression, classification, and evaluation metrics.",
+    project: "Build a house-price prediction model.",
+  },
+  "Artificial Intelligence": {
+    topic: "Artificial Intelligence basics",
+    practice: "Study search algorithms, problem-solving methods, and intelligent agents.",
+    project: "Build a simple pathfinding solver.",
+  },
+  "Data Analysis": {
+    topic: "Data analysis",
+    practice: "Learn data cleaning, exploratory analysis, and data visualization.",
+    project: "Analyze a public dataset and create a report.",
+  },
+  NumPy: {
+    topic: "NumPy",
+    practice: "Practice arrays, indexing, vectorized operations, and matrix calculations.",
+    project: "Create a numerical data analysis notebook.",
+  },
+  Pandas: {
+    topic: "Pandas",
+    practice: "Practice DataFrames, filtering, missing values, and grouping.",
+    project: "Clean and analyze a CSV dataset.",
+  },
+  "Scikit-learn": {
+    topic: "Scikit-learn",
+    practice: "Learn preprocessing, pipelines, model training, and evaluation.",
+    project: "Train and compare two classification models.",
+  },
+  "Data Structures": {
+    topic: "Data Structures",
+    practice: "Practice arrays, linked lists, stacks, queues, trees, and hash maps.",
+    project: "Build a contact manager using suitable data structures.",
+  },
+  Algorithms: {
+    topic: "Algorithms",
+    practice: "Practice searching, sorting, recursion, and time complexity.",
+    project: "Compare sorting algorithms on different input sizes.",
+  },
+  OOP: {
+    topic: "Object-Oriented Programming",
+    practice: "Practice classes, objects, inheritance, polymorphism, and encapsulation.",
+    project: "Build a library management application.",
+  },
+  "REST API": {
+    topic: "REST API development",
+    practice: "Learn HTTP methods, status codes, routing, and request validation.",
+    project: "Build a CRUD API for managing tasks.",
+  },
+  Flask: {
+    topic: "Flask web development",
+    practice: "Learn routes, request handling, templates, and API responses.",
+    project: "Create a Flask API for an ML model.",
+  },
+  Git: {
+    topic: "Git version control",
+    practice: "Practice commits, branches, merges, and resolving conflicts.",
+    project: "Maintain a project with a clean Git history.",
+  },
+  GitHub: {
+    topic: "GitHub collaboration",
+    practice: "Learn repositories, README files, issues, and pull requests.",
+    project: "Publish a project with setup instructions and screenshots.",
+  },
+  Docker: {
+    topic: "Docker fundamentals",
+    practice: "Learn images, containers, Dockerfiles, and port mapping.",
+    project: "Containerize a small web application.",
+  },
+  AWS: {
+    topic: "AWS fundamentals",
+    practice: "Understand IAM, compute, storage, and basic cloud deployment.",
+    project: "Deploy a small application using an appropriate AWS service.",
+  },
+  Communication: {
+    topic: "Technical communication",
+    practice: "Practice explaining technical decisions in simple language.",
+    project: "Record a short walkthrough of one of your projects.",
+  },
+  "Problem Solving": {
+    topic: "Problem-solving skills",
+    practice: "Solve coding problems and explain your approach and complexity.",
+    project: "Maintain a collection of solved problems with explanations.",
+  },
+};
 
+const DEFAULT_RECOMMENDATION = {
+  topic: "Build practical familiarity",
+  practice: "Read the official documentation and complete a beginner tutorial.",
+  project: "Build a small project demonstrating the skill.",
+};
 function ResumeAnalyzer() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -419,6 +521,73 @@ function ResumeAnalyzer() {
                       </div>
                     </div>
                   </div>
+
+                  
+{/* Learning recommendations */}
+<div className="mt-8">
+  <h3 className="text-xl font-semibold mb-2">
+    Your Learning Roadmap
+  </h3>
+
+  <p className="text-sm text-slate-400 mb-5">
+    Suggested next steps based on the skills not detected in your resume.
+  </p>
+
+  {matchResult.missingSkills.length > 0 ? (
+    <div className="space-y-4">
+      {matchResult.missingSkills.map((skill, index) => {
+        const recommendation =
+          LEARNING_RECOMMENDATIONS[skill] || DEFAULT_RECOMMENDATION;
+
+        return (
+          <div
+            key={skill}
+            className="rounded-xl border border-slate-800 bg-slate-950 p-5"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 text-blue-300 font-semibold">
+                {index + 1}
+              </div>
+
+              <div className="flex-1">
+                <h4 className="font-semibold text-white">{skill}</h4>
+
+                <p className="text-blue-300 text-sm mt-2">
+                  Learn: {recommendation.topic}
+                </p>
+
+                <p className="text-slate-400 text-sm mt-2">
+                  <span className="text-slate-300 font-medium">
+                    Practice:
+                  </span>{" "}
+                  {recommendation.practice}
+                </p>
+
+                <p className="text-slate-400 text-sm mt-2">
+                  <span className="text-slate-300 font-medium">
+                    Project:
+                  </span>{" "}
+                  {recommendation.project}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  ) : (
+    <div className="rounded-xl border border-green-800/50 bg-green-500/5 p-5">
+      <h4 className="font-semibold text-green-400">
+        No recognized skill gaps found!
+      </h4>
+
+      <p className="text-sm text-slate-400 mt-2">
+        Your resume contains all the skills recognized in this job description.
+        Consider strengthening your projects and practical experience.
+      </p>
+    </div>
+  )}
+</div>
 
                   <p className="text-slate-500 text-xs mt-5">
                     This is a keyword-overlap score, not an ATS score or a prediction of hiring success.
