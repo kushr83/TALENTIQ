@@ -397,7 +397,80 @@ function findSkills(text) {
     containsSkill(normalizedText, skill.toLowerCase())
   );
 }
+function calculateResumeScore(text) {
+  const resumeText = (text || "").trim();
 
+  if (!resumeText) {
+    return {
+      score: 0,
+      checks: [],
+      recommendations: ["Add resume text to calculate your score."],
+    };
+  }
+
+  const checks = [
+    {
+      label: "Contact information",
+      passed: /[\w.+-]+@[\w-]+\.[\w.-]+/.test(resumeText),
+      points: 15,
+      suggestion: "Add a professional email address.",
+    },
+    {
+      label: "Education section",
+      passed: /\beducation\b/i.test(resumeText),
+      points: 15,
+      suggestion: "Add a clearly labeled Education section.",
+    },
+    {
+      label: "Skills section",
+      passed: /\b(skills|technical skills|core competencies)\b/i.test(
+        resumeText
+      ),
+      points: 20,
+      suggestion: "Add a clearly labeled Skills section.",
+    },
+    {
+      label: "Projects section",
+      passed: /\b(projects|personal projects|academic projects)\b/i.test(
+        resumeText
+      ),
+      points: 20,
+      suggestion: "Add a Projects section describing your contributions.",
+    },
+    {
+      label: "Experience section",
+      passed: /\b(experience|internship|work history|employment)\b/i.test(
+        resumeText
+      ),
+      points: 15,
+      suggestion:
+        "Add relevant experience or internships if applicable.",
+    },
+    {
+      label: "Measurable achievements",
+      passed:
+        /\b(increased|improved|reduced|built|developed|achieved|automated)\b/i.test(
+          resumeText
+        ) && /\b\d+%?\b/.test(resumeText),
+      points: 15,
+      suggestion:
+        "Where accurate, quantify achievements and project results.",
+    },
+  ];
+
+  const score = checks.reduce(
+    (total, check) => total + (check.passed ? check.points : 0),
+    0
+  );
+
+  return {
+    score,
+    checks,
+    recommendations: checks
+      .filter((check) => !check.passed)
+      .map((check) => check.suggestion),
+  };
+}
 function getToken() {
   return localStorage.getItem("token");
 }
@@ -867,6 +940,104 @@ function ResumeAnalyzer() {
               <h2 className="text-2xl font-semibold">
                 Resume Analysis Results
               </h2>
+              {(() => {
+  const resumeScore = calculateResumeScore(
+    resume?.text || ""
+  );
+
+  return (
+    <div className="mt-6 space-y-6">
+      {/* Resume score */}
+      <div className="rounded-xl border border-slate-700 bg-slate-950 p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-white">
+              Resume Completeness Score
+            </h3>
+            <p className="mt-1 text-sm text-slate-400">
+              A rule-based check of resume sections and content.
+              This is not an official ATS score.
+            </p>
+          </div>
+
+          <div className="text-3xl font-bold text-cyan-400">
+            {resumeScore.score}
+            <span className="text-lg text-slate-400"> / 100</span>
+          </div>
+        </div>
+
+        <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-800">
+          <div
+            className="h-full rounded-full bg-cyan-400 transition-all duration-500"
+            style={{ width: `${resumeScore.score}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Checklist */}
+      <div className="rounded-xl border border-slate-700 bg-slate-950 p-6">
+        <h3 className="text-lg font-semibold text-white">
+          Resume Checklist
+        </h3>
+
+        <div className="mt-4 space-y-3">
+          {resumeScore.checks.map((check) => (
+            <div
+              key={check.label}
+              className="flex items-center justify-between gap-4 rounded-lg bg-slate-900 p-3"
+            >
+              <span className="text-slate-200">
+                {check.label}
+              </span>
+
+              <span
+                className={
+                  check.passed
+                    ? "text-sm font-medium text-emerald-400"
+                    : "text-sm font-medium text-amber-400"
+                }
+              >
+                {check.passed
+                  ? `✓ Meets check (+${check.points})`
+                  : "Needs attention"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recommendations */}
+      <div className="rounded-xl border border-slate-700 bg-slate-950 p-6">
+        <h3 className="text-lg font-semibold text-white">
+          Recommended Improvements
+        </h3>
+
+        {resumeScore.recommendations.length > 0 ? (
+          <ul className="mt-4 space-y-3">
+            {resumeScore.recommendations.map(
+              (recommendation, index) => (
+                <li
+                  key={recommendation}
+                  className="flex gap-3 text-slate-300"
+                >
+                  <span className="font-bold text-cyan-400">
+                    {index + 1}.
+                  </span>
+                  <span>{recommendation}</span>
+                </li>
+              )
+            )}
+          </ul>
+        ) : (
+          <p className="mt-3 text-emerald-400">
+            All checks passed! Review the resume manually to ensure
+            your information is accurate and relevant.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+})()}
 <button
   type="button"
   onClick={() => navigate("/resume-improver")}
