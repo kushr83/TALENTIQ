@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Link } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:5000/api";
@@ -413,6 +415,7 @@ async function readJsonResponse(response) {
 }
 
 function ResumeAnalyzer() {
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -575,6 +578,10 @@ function ResumeAnalyzer() {
       }
 
       setResume(data.resume);
+      sessionStorage.setItem(
+  "talentiq_resume_analysis",
+  JSON.stringify(data.resume)
+);
       setMessage(data.message || "Resume analyzed successfully.");
     } catch (error) {
       console.error("Resume upload error:", error);
@@ -860,7 +867,13 @@ function ResumeAnalyzer() {
               <h2 className="text-2xl font-semibold">
                 Resume Analysis Results
               </h2>
-
+<button
+  type="button"
+  onClick={() => navigate("/resume-improver")}
+  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-cyan-400"
+>
+  ✨ Improvise My Resume →
+</button>
               <div className="my-6 grid gap-4 sm:grid-cols-3">
                 <div className="rounded-lg bg-slate-950 p-4">
                   <p className="text-sm text-slate-400">File</p>

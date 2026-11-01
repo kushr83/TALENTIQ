@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
+import ResumeImprover from "./pages/ResumeImprover";
 
 // Landing page
 function Home() {
@@ -58,6 +59,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
+          <Route path="/resume-improver" element={<ResumeImprover />} />
         </Route>
 
         {/* Unknown routes return to login */}
