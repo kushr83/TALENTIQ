@@ -10,7 +10,8 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// PostgreSQL connection
+// ==================== POSTGRESQL CONNECTION ====================
+
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -19,11 +20,13 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// Middleware
+// ==================== MIDDLEWARE ====================
+
 app.use(cors());
 app.use(express.json());
 
-// PDF upload configuration
+// ==================== PDF UPLOAD CONFIGURATION ====================
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -44,16 +47,18 @@ const upload = multer({
   },
 });
 
-// JWT authentication middleware
+// ==================== JWT AUTHENTICATION ====================
+
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
+
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.split(" ")[1]
     : null;
 
   if (!token) {
     return res.status(401).json({
-      message: "Please log in to use Resume Intelligence.",
+      message: "Please log in to use TalentIQ.",
     });
   }
 
@@ -67,34 +72,43 @@ function authenticateToken(req, res, next) {
   }
 }
 
-// Home route
+// ==================== HOME ROUTE ====================
+
 app.get("/", (req, res) => {
   res.json({
     message: "TalentIQ API is running successfully",
   });
 });
 
-// Database test route
+// ==================== DATABASE TEST ROUTE ====================
+
 app.get("/api/test-db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
 
-    res.json({
+    return res.json({
       message: "PostgreSQL connected successfully",
       time: result.rows[0].now,
     });
   } catch (error) {
     console.error("Database connection error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Database connection failed",
     });
   }
 });
 
-// REGISTER
+// ==================== REGISTER ====================
+
 app.post("/api/auth/register", async (req, res) => {
   const { name, email, password, role } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({
+      message: "Name, email, and password are required.",
+    });
+  }
 
   try {
     const existingUser = await pool.query(
@@ -114,25 +128,32 @@ app.post("/api/auth/register", async (req, res) => {
       `INSERT INTO users (name, email, password, role)
        VALUES ($1, $2, $3, $4)
        RETURNING id, name, email, role, created_at`,
-      [name, email, hashedPassword, role]
+      [name, email, hashedPassword, role || "user"]
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Account created successfully!",
       user: result.rows[0],
     });
   } catch (error) {
     console.error("Registration error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Something went wrong while creating the account.",
     });
   }
 });
 
-// LOGIN
+// ==================== LOGIN ====================
+
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Email and password are required.",
+    });
+  }
 
   try {
     const result = await pool.query(
@@ -159,6 +180,10 @@ app.post("/api/auth/login", async (req, res) => {
       });
     }
 
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not configured in the .env file.");
+    }
+
     const token = jwt.sign(
       {
         id: user.id,
@@ -169,7 +194,7 @@ app.post("/api/auth/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({
+    return res.json({
       message: "Login successful!",
       token,
       user: {
@@ -182,13 +207,14 @@ app.post("/api/auth/login", async (req, res) => {
   } catch (error) {
     console.error("Login error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Something went wrong while logging in.",
     });
   }
 });
 
-// Skills TalentIQ can recognize
+// ==================== RECOGNIZED SKILLS ====================
+
 const SKILL_KEYWORDS = [
   "C++",
   "C",
@@ -246,7 +272,8 @@ const SKILL_KEYWORDS = [
   "DevOps",
 ];
 
-// RESUME ANALYSIS
+// ==================== RESUME ANALYSIS ====================
+
 app.post(
   "/api/resume/analyze",
   authenticateToken,
@@ -259,14 +286,14 @@ app.post(
         });
       }
 
-      // Validate the actual PDF signature
+      // Validate the actual PDF signature.
       if (req.file.buffer.subarray(0, 5).toString() !== "%PDF-") {
         return res.status(400).json({
           message: "The uploaded file is not a valid PDF.",
         });
       }
 
-      // Extract text from the PDF
+      // Extract text from the PDF.
       const pdfData = await pdfParse(req.file.buffer);
       const extractedText = pdfData.text.trim();
 
@@ -277,16 +304,16 @@ app.post(
         });
       }
 
-      // Normalize text to simplify matching
+      // Normalize text to simplify matching.
       const normalizedText = extractedText
         .toLowerCase()
         .replace(/\s+/g, " ");
 
-      // Detect skills using keyword matching
+      // Detect skills using keyword matching.
       const detectedSkills = SKILL_KEYWORDS.filter((skill) => {
         const normalizedSkill = skill.toLowerCase();
 
-        // Match C without matching it inside other words
+        // Match C without matching it inside other words.
         if (normalizedSkill === "c") {
           return /(^|[^a-z0-9])c($|[^a-z0-9+#])/i.test(
             normalizedText
@@ -299,7 +326,7 @@ app.post(
           "\\$&"
         );
 
-        // Match complete words or phrases
+        // Match complete words or phrases.
         const pattern = new RegExp(
           `(^|[^a-z0-9])${escapedSkill}(?=$|[^a-z0-9])`,
           "i"
@@ -308,7 +335,6 @@ app.post(
         return pattern.test(normalizedText);
       });
 
-      // Return analysis results to the frontend
       return res.json({
         message: "Resume analyzed successfully!",
         resume: {
@@ -331,7 +357,91 @@ app.post(
   }
 );
 
-// Handle upload errors
+// ==================== LEARNING PROGRESS: GET ====================
+
+app.get(
+  "/api/learning-progress",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      const result = await pool.query(
+        `SELECT skill, status
+         FROM learning_progress
+         WHERE user_id = $1
+         ORDER BY skill`,
+        [userId]
+      );
+
+      return res.json({
+        progress: result.rows,
+      });
+    } catch (error) {
+      console.error("Fetch learning progress error:", error);
+
+      return res.status(500).json({
+        message: "Failed to fetch learning progress.",
+      });
+    }
+  }
+);
+
+// ==================== LEARNING PROGRESS: SAVE / UPDATE ====================
+
+app.put(
+  "/api/learning-progress",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { skill, status } = req.body;
+
+      const allowedStatuses = [
+        "Not Started",
+        "In Progress",
+        "Completed",
+      ];
+
+      if (
+        typeof skill !== "string" ||
+        !skill.trim() ||
+        skill.trim().length > 100 ||
+        !allowedStatuses.includes(status)
+      ) {
+        return res.status(400).json({
+          message: "Please provide a valid skill and learning status.",
+        });
+      }
+
+      const result = await pool.query(
+        `INSERT INTO learning_progress
+           (user_id, skill, status, updated_at)
+         VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+         ON CONFLICT (user_id, skill)
+         DO UPDATE SET
+           status = EXCLUDED.status,
+           updated_at = CURRENT_TIMESTAMP
+         RETURNING skill, status, updated_at`,
+        [userId, skill.trim(), status]
+      );
+
+      return res.json({
+        message: "Learning progress saved successfully.",
+        progress: result.rows[0],
+      });
+    } catch (error) {
+      console.error("Save learning progress error:", error);
+
+      return res.status(500).json({
+        message: "Failed to save learning progress.",
+      });
+    }
+  }
+);
+
+// ==================== UPLOAD ERROR HANDLER ====================
+
 app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     const message =
@@ -343,7 +453,9 @@ app.use((error, req, res, next) => {
   }
 
   if (error.message === "Only PDF resume files are allowed.") {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({
+      message: error.message,
+    });
   }
 
   console.error("Server error:", error);
@@ -353,7 +465,8 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Start server
+// ==================== START SERVER ====================
+
 app.listen(PORT, () => {
   console.log(`TalentIQ backend running on http://localhost:${PORT}`);
 });

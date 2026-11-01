@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -40,28 +40,28 @@ function Home() {
   );
 }
 
-// Application routes
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Send visitors to login first */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* Public pages */}
-        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+        {/* Optional landing page */}
+        <Route path="/home" element={<Home />} />
+
         {/* Protected pages: login required */}
         <Route element={<ProtectedRoute />}>
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
-
-          <Route
-            path="/resume-analyzer"
-            element={<ResumeAnalyzer />}
-          />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
         </Route>
+
+        {/* Unknown routes return to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
